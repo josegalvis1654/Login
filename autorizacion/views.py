@@ -31,7 +31,9 @@ class LoginView(generics.GenericAPIView):
         if user is not None:
             # Generar o recuperar el token
             token, created = Token.objects.get_or_create(user=user)
-            return Response({"token": token.key, "message": "Login exitoso", "userinfo": self.serializer_class(user).data,"grupo":"gerente"})
+            user_groups = user.groups.all()
+            group_names = [group.name for group in user_groups]
+            return Response({"token": token.key, "message": "Login exitoso", "userinfo": self.serializer_class(user).data,"grupo": group_names})
         else:
             # Enviar un error si las credenciales no son válidas
             return Response({"error": "Credenciales inválidas"}, status=400)
